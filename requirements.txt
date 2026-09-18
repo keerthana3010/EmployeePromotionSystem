@@ -1,0 +1,17 @@
+# Core web app
+streamlit>=1.38
+
+# Data handling
+pandas==3.0.2
+numpy==2.4.4
+
+# Machine learning (pinned to match the trained model artifact in
+# models/promotion_pipeline.joblib - upgrading these without retraining
+# via training/train_model.py risks silent prediction drift or a failed
+# unpickle).
+scikit-learn==1.8.0
+xgboost==3.4.1
+joblib==1.5.3
+
+# Visualization
+plotly>=5.20

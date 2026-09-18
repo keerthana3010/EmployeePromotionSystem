@@ -1,0 +1,136 @@
+{
+  "dataset": {
+    "total_rows_raw": 54808,
+    "total_rows_after_dedup": 54690,
+    "duplicates_removed": 118,
+    "promoted": 4665,
+    "not_promoted": 50025,
+    "promotion_rate_pct": 8.53,
+    "train_size": 43752,
+    "test_size": 10938
+  },
+  "candidates": {
+    "logistic_regression": {
+      "threshold": 0.625,
+      "accuracy": 0.7971292740903273,
+      "precision": 0.22846283783783783,
+      "recall": 0.579849946409432,
+      "f1": 0.3277794607694638,
+      "roc_auc": 0.8106993127230597,
+      "pr_auc": 0.3005634804537763,
+      "confusion_matrix": [
+        [
+          8178,
+          1827
+        ],
+        [
+          392,
+          541
+        ]
+      ]
+    },
+    "random_forest": {
+      "threshold": 0.32499999999999996,
+      "accuracy": 0.9252148473212654,
+      "precision": 0.5854383358098069,
+      "recall": 0.42229367631296894,
+      "f1": 0.49066002490660027,
+      "roc_auc": 0.8896582255496047,
+      "pr_auc": 0.5597863945700357,
+      "confusion_matrix": [
+        [
+          9726,
+          279
+        ],
+        [
+          539,
+          394
+        ]
+      ]
+    },
+    "xgboost": {
+      "threshold": 0.7849999999999999,
+      "accuracy": 0.9285975498262936,
+      "precision": 0.6095100864553314,
+      "recall": 0.4533762057877814,
+      "f1": 0.5199754148740012,
+      "roc_auc": 0.9056704230949906,
+      "pr_auc": 0.6033664523463593,
+      "confusion_matrix": [
+        [
+          9734,
+          271
+        ],
+        [
+          510,
+          423
+        ]
+      ]
+    }
+  },
+  "original_model": {
+    "threshold": 0.5,
+    "accuracy": 0.9490766136405193,
+    "precision": 0.8983050847457628,
+    "recall": 0.45444801714898175,
+    "f1": 0.6035587188612099,
+    "roc_auc": 0.9493963629117915,
+    "pr_auc": 0.7358710069887784,
+    "confusion_matrix": [
+      [
+        9957,
+        48
+      ],
+      [
+        509,
+        424
+      ]
+    ]
+  },
+  "selected_model": "xgboost",
+  "selected_model_metrics": {
+    "threshold": 0.7849999999999999,
+    "accuracy": 0.9285975498262936,
+    "precision": 0.6095100864553314,
+    "recall": 0.4533762057877814,
+    "f1": 0.5199754148740012,
+    "roc_auc": 0.9056704230949906,
+    "pr_auc": 0.6033664523463593,
+    "confusion_matrix": [
+      [
+        9734,
+        271
+      ],
+      [
+        510,
+        423
+      ]
+    ]
+  },
+  "feature_importances": {
+    "KPIs_met >80%": 0.3965901732444763,
+    "awards_won?": 0.1420932561159134,
+    "department": 0.128726065158844,
+    "avg_training_score": 0.09895851463079453,
+    "previous_year_rating": 0.08565270900726318,
+    "region": 0.023922158405184746,
+    "gender": 0.022523531690239906,
+    "no_of_trainings": 0.021464329212903976,
+    "age": 0.021308865398168564,
+    "length_of_service": 0.021117886528372765,
+    "education": 0.018865203484892845,
+    "recruitment_channel": 0.01877729594707489
+  },
+  "class_imbalance_handling": {
+    "logistic_regression": "class_weight='balanced'",
+    "random_forest": "class_weight='balanced'",
+    "xgboost": "scale_pos_weight=10.723"
+  },
+  "threshold_tuning": "Per-model threshold chosen by maximizing F1 on 5-fold stratified out-of-fold CV predictions on the training set only.",
+  "notes": "All metrics computed on a single held-out 20% stratified test split, never used during training, CV, or threshold selection.",
+  "data_leakage_finding": {
+    "summary": "The original pre-upgrade model's metrics on our held-out test split are nearly identical to its metrics on the ENTIRE dataset including that same test split. This is the signature of a model trained on 100% of the data with no genuine held-out set, meaning it very likely saw this 'test' data during its own training.",
+    "conclusion": "The original model's high scores are not a fair estimate of real-world generalization. The new pipeline's model was trained with a strict 80/20 stratified split (test set never touched during training, CV, or threshold tuning), so its metrics are the honest, leak-free estimate of real-world performance.",
+    "decision": "Deploy the new leak-free model as the production model. It is not presented as 'more accurate' than the old model's reported numbers, because those numbers are not trustworthy for comparison; it is presented as the properly-validated model."
+  }
+}
